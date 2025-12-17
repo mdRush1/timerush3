@@ -19,7 +19,7 @@ window.TR_DEFAULT_PRODUCTS = [
     name: "dangoura",
     brand: "SKMEI",
     category: "featured",
-    price: 29.99,
+    price: 999999.99,
     compareAtPrice: 35.99,
     badge: "Sale",
     image: "11.png",
