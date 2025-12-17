@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Admin — Time Rush</title>
+  <meta name="description" content="Admin dashboard — manage products for Time Rush" />
+
+  <link rel="icon" href="favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="Time Rush Home">
+        <img src="assets/images/logo-mark.png" class="brand-mark" alt="Time Rush" />
+        <div class="brand-text">
+          <div class="brand-name" data-bind="storeName">Time Rush</div>
+          <div class="brand-tag" data-bind="tagline">Luxury Watches</div>
+        </div>
+      </a>
+
+      <nav class="nav" aria-label="Primary">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="shop.html" class="nav-link">Shop</a>
+        <a href="admin.html" class="nav-link is-active">Admin</a>
+        <button class="nav-burger" data-action="nav-open" aria-label="Open menu">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MOBILE MENU -->
+  <div id="mobileMenu" class="overlay" aria-hidden="true">
+    <div class="sheet" role="dialog" aria-label="Menu">
+      <div class="sheet-head">
+        <div class="sheet-title">Menu</div>
+        <button class="icon-btn" data-action="nav-close" aria-label="Close">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="sheet-links">
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="admin.html">Admin</a>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <!-- LOGIN VIEW -->
+    <section id="viewLogin" data-view class="section hidden">
+      <div class="container">
+        <div class="admin-login">
+          <h1>Admin Login</h1>
+          <p class="muted">Default password: <strong>timerush</strong> (you can change it after login)</p>
+
+          <form id="loginForm" class="form">
+            <div class="form-row">
+              <label>Password</label>
+              <input id="loginPass" type="password" placeholder="Enter password" required />
+            </div>
+            <button class="btn btn-primary" type="submit">Login</button>
+          </form>
+
+          <p class="fine muted">This admin dashboard saves products inside your browser (localStorage). If you open the site on another device/browser, you need to import the exported JSON.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN VIEW -->
+    <section id="viewAdmin" data-view class="section hidden">
+      <div class="container">
+        <div class="admin-head">
+          <div>
+            <h1>Admin Dashboard</h1>
+            <p class="muted">Manage products, pricing, and store settings.</p>
+          </div>
+          <button id="logoutBtn" class="btn btn-ghost" type="button">Logout</button>
+        </div>
+
+        <div class="admin-grid">
+          <!-- Products -->
+          <div class="admin-card">
+            <div class="admin-card-head">
+              <h2>Products</h2>
+              <div class="admin-actions">
+                <button id="addProductBtn" class="btn btn-primary" type="button">Add product</button>
+              </div>
+            </div>
+
+            <div class="admin-filters">
+              <div class="input">
+                <label>Search</label>
+                <input id="adminSearch" type="search" placeholder="Search by name, brand, or ID" />
+              </div>
+
+              <div class="input">
+                <label>Category</label>
+                <select id="adminCategory">
+                  <option value="all">All</option>
+                  <option value="featured">Featured</option>
+                  <option value="classic">Classic</option>
+                  <option value="sport">Sport</option>
+                </select>
+              </div>
+
+              <div class="admin-count"><span class="muted">Showing</span> <strong id="productCount">0</strong></div>
+            </div>
+
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Image</th>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Badge</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="productsBody"></tbody>
+              </table>
+            </div>
+
+            <div class="admin-tools">
+              <button id="exportBtn" class="btn btn-ghost" type="button">Export JSON</button>
+              <label class="btn btn-ghost" for="importFile" style="cursor:pointer;">Import JSON</label>
+              <input id="importFile" type="file" accept="application/json" style="display:none;" />
+              <button id="resetBtn" class="btn btn-danger" type="button">Reset to default</button>
+            </div>
+          </div>
+
+          <!-- Settings -->
+          <div class="admin-card">
+            <div class="admin-card-head">
+              <h2>Store Settings</h2>
+            </div>
+
+            <form id="settingsForm" class="form">
+              <div class="form-row">
+                <label>Store name</label>
+                <input id="sName" placeholder="Time Rush" />
+              </div>
+              <div class="form-row">
+                <label>Tagline</label>
+                <input id="sTagline" placeholder="Luxury Watches" />
+              </div>
+              <div class="form-row">
+                <label>Currency symbol</label>
+                <input id="sCurrency" placeholder="$" />
+              </div>
+              <div class="form-row">
+                <label>Contact email</label>
+                <input id="sEmail" type="email" placeholder="timerush11@gmail.com" />
+              </div>
+
+              <button class="btn btn-primary" type="submit">Save settings</button>
+            </form>
+
+            <div class="divider"></div>
+
+            <h2>Security</h2>
+            <p class="muted">Change admin password.</p>
+            <form id="passForm" class="form">
+              <div class="form-row">
+                <label>Old password</label>
+                <input id="oldPass" type="password" required />
+              </div>
+              <div class="form-row">
+                <label>New password</label>
+                <input id="newPass" type="password" required />
+              </div>
+              <button class="btn btn-primary" type="submit">Update password</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- PRODUCT EDITOR MODAL -->
+  <div id="productEditor" class="modal" aria-hidden="true">
+    <div class="modal-card modal-wide" role="dialog" aria-label="Product editor">
+      <button class="icon-btn modal-close" data-action="close-editor" aria-label="Close">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+      <h2 id="editorTitle">Add product</h2>
+
+      <div class="editor-grid">
+        <div class="editor-form">
+          <div class="form-grid">
+            <div class="form-row">
+              <label>ID (unique)</label>
+              <input id="pId" placeholder="tr-015" />
+            </div>
+            <div class="form-row">
+              <label>Name</label>
+              <input id="pName" placeholder="Watch name" required />
+            </div>
+            <div class="form-row">
+              <label>Brand</label>
+              <input id="pBrand" placeholder="SKMEI / Naviforce / Curren" />
+            </div>
+            <div class="form-row">
+              <label>Category</label>
+              <select id="pCategory">
+                <option value="featured">Featured</option>
+                <option value="classic">Classic</option>
+                <option value="sport">Sport</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>Price</label>
+              <input id="pPrice" type="number" step="0.01" placeholder="29.99" />
+            </div>
+            <div class="form-row">
+              <label>Compare-at (old price)</label>
+              <input id="pCompare" type="number" step="0.01" placeholder="35.99" />
+            </div>
+            <div class="form-row">
+              <label>Badge</label>
+              <input id="pBadge" placeholder="Sale / New / Classic" />
+            </div>
+            <div class="form-row">
+              <label>Image path / URL</label>
+              <input id="pImage" placeholder="assets/images/11.png" />
+            </div>
+            <div class="form-row form-row-full">
+              <label>Short description</label>
+              <input id="pShort" placeholder="Short line for cards" />
+            </div>
+            <div class="form-row form-row-full">
+              <label>Full description</label>
+              <textarea id="pDesc" rows="3" placeholder="Full description"></textarea>
+            </div>
+            <div class="form-row form-row-full">
+              <label>Highlights (comma separated)</label>
+              <input id="pHighlights" placeholder="Dual display, Backlight, WR50M" />
+            </div>
+            <div class="form-row form-row-full">
+              <label>Specs (one per line: Key: Value)</label>
+              <textarea id="pSpecs" rows="5" placeholder="Movement: Quartz\nWater Resistance: WR50M\nStrap: Resin"></textarea>
+            </div>
+            <div class="form-row">
+              <label class="check">
+                <input id="pActive" type="checkbox" checked />
+                <span>Active (visible in store)</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="editor-actions">
+            <button id="saveProductBtn" class="btn btn-primary" type="button" data-mode="add">Save</button>
+            <button class="btn btn-ghost" type="button" data-action="close-editor">Cancel</button>
+          </div>
+        </div>
+
+        <div class="editor-preview">
+          <div class="preview-title">Preview</div>
+          <img id="pPreview" src="assets/images/logo-mark.png" alt="preview" />
+          <p class="fine muted">Tip: use image paths from <code>assets/images/</code> or full image URLs.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <img src="assets/images/logo-mark.png" alt="Time Rush" />
+        <div>
+          <div class="footer-name" data-bind="storeName">Time Rush</div>
+          <div class="muted" data-bind="tagline">Luxury Watches</div>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+      </div>
+
+      <div class="footer-copy">
+        <div class="muted">© <span id="year"></span> Time Rush. All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/admin.js"></script>
+</body>
+</html>
